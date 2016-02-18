@@ -1,3 +1,7 @@
+'''
+calculate note distribution from score
+'''
+
 import os, sys
 from os import listdir
 from os.path import isfile, join, splitext
@@ -17,10 +21,11 @@ intervals_total = []
 for filename in onlyfiles:
     filenameRoot, fileExtension = splitext(filename)
     if fileExtension == '.xml':
+        # get intervals of the singing track
         intervals = musicXMLparser.getIntervals(join(scoreFolder, filename))
         intervals_total += intervals
 
-'''
+
 # find unique elements
 intervalsSet    = set(intervals_total)
 intervalsUnique = list(intervalsSet)
@@ -47,15 +52,16 @@ interFreqValues = oIntervalsFreq.values()
 interMean, interStd = norm.fit(intervals_total)
 interX              = range(min(interFreqKeys),max(interFreqKeys)+1)
 interPdf            = norm.pdf(interX,interMean,interStd)
+interFreqValuesNorm = np.array(interFreqValues)/float(sum(interFreqValues))
 
 print oIntervalsFreq
-print interFreqKeys
-print np.array(interFreqValues)/float(sum(interFreqValues))
+print 'interFreqKeysNorm', interFreqKeys                # intervals
+print 'interFreqValuesNorm', interFreqValuesNorm        # intervals frequency
 print interPdf
 
-plt.stem(interFreqKeys,np.array(interFreqValues)/float(sum(interFreqValues)))
+plt.stem(interFreqKeys,interFreqValuesNorm)
 plt.plot(interX,interPdf,'k')
-plt.xlabel("Interval")
+plt.xlabel("Interval (semitone)")
 plt.ylabel("Frequency")
 plt.show()
 
@@ -64,5 +70,4 @@ plt.show()
 # bins = np.linspace(-10,10,21)
 # plt.hist(intervals_total,bins)
 # plt.title("Intervals Histogram")
-'''
 

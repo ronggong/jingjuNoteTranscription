@@ -7,19 +7,21 @@ def getIntervals(xmlFile):
     :return:
     '''
     xmlScore = converter.parse(xmlFile)
-    xmlScore.show()
-
-    p = xmlScore[2]
-
-    p = p.flat.notes
-
-    for pp in p.elements:
-        if pp.duration.isGrace:
-            p.remove(pp)
 
     intervals = []
-    for ii in range(len(p)-1):
-        intervals.append(interval.notesToChromatic(p[ii],p[ii+1]).semitones)
+
+    for part in xmlScore:
+        try:
+            if part.flat.notes[0].hasLyrics():
+                p = part.flat.notes
+                for pp in p.elements:
+                    if pp.duration.isGrace:
+                        p.remove(pp)
+
+                for ii in range(len(p)-1):
+                    intervals.append(interval.notesToChromatic(p[ii],p[ii+1]).semitones)
+        except:
+            pass
 
     return intervals
 
